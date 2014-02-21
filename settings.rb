@@ -7,6 +7,7 @@ module Settings
   extend self
 
   @_settings = {}
+  @_loaded = false
   attr_reader :_settings
 
   # This is the main point of entry - we call Settings.load! and provide
@@ -14,12 +15,15 @@ module Settings
   # options, but at the moment it's being used to allow per-environment
   # overrides in Rails
   def load!(filename, options = {})
-    newsets = YAML::load_file(filename)
-    newsets.deep_symbolize_keys!
-    newsets = newsets[options[:env].to_sym] if \
-                                               options[:env] && \
-                                               newsets[options[:env].to_sym]
-    deep_merge!(@_settings, newsets)
+    if !@loaded
+      newsets = YAML::load_file(filename)
+      newsets.deep_symbolize_keys!
+      newsets = newsets[options[:env].to_sym] if \
+                                                 options[:env] && \
+                                                 newsets[options[:env].to_sym]
+      deep_merge!(@_settings, newsets)
+      loaded = true
+    end
   end
 
   # Deep merging of hashes

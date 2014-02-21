@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'socket'
 require './settings.rb'
-#require './logger.rb'
+require './logger.rb'
 
 class Chocobot
 
@@ -18,7 +18,7 @@ class Chocobot
 		@irc.write("JOIN " + @channel + "\n")
 		@run = true
 
-		#@logger = Logger.new()
+		@logger = Logger.new()
 
 		puts "Initialization complete!"
 	end
@@ -64,12 +64,13 @@ class Chocobot
 						commands(nick, channel, msg)
 					end
 				end
-				#if data.index(@channel + ' :') != nil && @logger.joins
-
-				#end
+				if data.split(" ")[1] == '353' && @logger.joins()
+					@logger.puts("Users: " + data.split(@channel + ' :')[1])
+				end
 			end
 		end
 		@irc.puts("PART " + @channel)
+		@logger.close()
 		@irc.close()
 	end
 end
