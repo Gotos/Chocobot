@@ -1,0 +1,7 @@
+connection:
+  host: 'irc.twitch.tv'
+  port: 6667
+  oauth: 'oauth:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+  username: 'gRuFtBoT'
+  channel: '#gruftbot'
+

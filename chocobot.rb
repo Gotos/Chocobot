@@ -1,27 +1,29 @@
 #!/usr/bin/env ruby
 require 'socket'
-
-# Config
-host = 'irc.twitch.tv'
-port = 6667
-oauth = 'oauth:93ppl5bfy07ujkswfmrj4fpjgl8rufl'
-username = 'gRuFtBoT'
-channel = '#gruftbot'
+require './settings.rb'
+#require './logger.rb'
 
 class Chocobot
 
-	def initialize(host, port, username, oauth, channel)
-		# Initialize
+	# Initialize
+	def initialize()
+
+		# Connect
+		concon = Settings.connection
 		@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-		@irc.connect(Socket.pack_sockaddr_in(port, host))
-		@irc.puts("PASS " + oauth)
-		@irc.puts("NICK " + username)
-		@channel = channel
+		@irc.connect(Socket.pack_sockaddr_in(concon[:port], concon[:host]))
+		@irc.puts("PASS " + concon[:oauth])
+		@irc.puts("NICK " + concon[:username])
+		@channel = concon[:channel]
 		@irc.write("JOIN " + @channel + "\n")
 		@run = true
+
+		#@logger = Logger.new()
+
 		puts "Initialization complete!"
 	end
 
+	# Sends a Message to current channel
 	def message(msg)
 		@irc.puts("PRIVMSG " + @channel + " :" + msg)
 	end
@@ -38,8 +40,8 @@ class Chocobot
 		end
 	end
 
+	# Main-Loop
 	def main()
-		# Main-Loop
 		message("Selftest complete.")
 		while @run
 			data = @irc.gets()
@@ -50,9 +52,9 @@ class Chocobot
 					ping()
 				end
 				if data.index(' MODE ') != nil
-					pass #TODO
+					#TODO
 				end
-				if data.index(' PRIVMSG ')!= nil
+				if data.index(' PRIVMSG ') != nil
 					nick = ""
 					#nick = data.split('!')[0][1:]
 					channel = data.split(' PRIVMSG ')[1].split(' :')[0]
@@ -62,6 +64,9 @@ class Chocobot
 						commands(nick, channel, msg)
 					end
 				end
+				#if data.index(@channel + ' :') != nil && @logger.joins
+
+				#end
 			end
 		end
 		@irc.puts("PART " + @channel)
@@ -69,5 +74,8 @@ class Chocobot
 	end
 end
 
-bot = Chocobot.new(host, port, username, oauth, channel)
+
+# Start everything
+Settings.load!("config.yaml")
+bot = Chocobot.new()
 bot.main()
