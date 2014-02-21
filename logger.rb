@@ -9,7 +9,7 @@ class Logger
 		@op			= logcon[:op]
 		@messages	= logcon[:messages]
 		if @general
-			@file = File.open('bot.log', 'w')
+			@file = File.open('bot.log', 'a')
 			@file.sync = true
 		end
 	end
@@ -26,10 +26,12 @@ class Logger
 		@general && @messages
 	end
 
-	def puts(messages)
-		if @general
-			@file.write("<" + Time.new().strftime("%H:%M:%S") + "> ")
-			@file.puts(messages)
+	def puts(messages, log = false)
+		string = "<" + Time.new().strftime("%H:%M:%S") + "> "
+		string += messages
+		$stdout.puts(string)
+		if @general && log
+			@file.puts(string)
 		end
 	end
 

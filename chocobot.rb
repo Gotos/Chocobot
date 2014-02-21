@@ -20,7 +20,7 @@ class Chocobot
 
 		@logger = Logger.new()
 
-		puts "Initialization complete!"
+		@logger.puts("Initialization complete!", true)
 	end
 
 	# Sends a Message to current channel
@@ -35,7 +35,7 @@ class Chocobot
 	def commands(nick, channel, msg)
 		case msg.split()[0]
 		when "!exit"
-			puts "Exiting..."
+			@logger.puts("Exiting...", true)
 			@run = false
 		end
 	end
@@ -47,7 +47,7 @@ class Chocobot
 			data = @irc.gets()
 			if data != nil
 				data.strip!()
-				puts data
+				#puts data
 				if data.index("PING :") != nil
 					ping()
 				end
@@ -55,17 +55,16 @@ class Chocobot
 					#TODO
 				end
 				if data.index(' PRIVMSG ') != nil
-					nick = ""
-					#nick = data.split('!')[0][1:]
+					nick = data.split('!')[0][1..-1]
 					channel = data.split(' PRIVMSG ')[1].split(' :')[0]
 					msg = data.split(' PRIVMSG ')[1].split(' :')[1]
-					puts "Msg: " + msg
+					@logger.puts(nick + ": " + msg, @logger.messages())
 					if msg[0] == "!"
 						commands(nick, channel, msg)
 					end
 				end
-				if data.split(" ")[1] == '353' && @logger.joins()
-					@logger.puts("Users: " + data.split(@channel + ' :')[1])
+				if data.split(" ")[1] == '353'
+					@logger.puts("Users: " + data.split(@channel + ' :')[1], @logger.joins())
 				end
 			end
 		end
