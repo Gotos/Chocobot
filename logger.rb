@@ -8,8 +8,16 @@ class Logger
 		@joins		= logcon[:joins]
 		@op			= logcon[:op]
 		@messages	= logcon[:messages]
-		if @general
-			@file = File.open('bot.log', 'a')
+	end
+
+	def init_file()
+		date = Time.new().strftime("%Y-%m-%d")
+		if @date == nil || @date != date
+			@date = date
+			if @file != nil && !@file.closed?()
+				@file.close()
+			end
+			@file = File.open(@date + '.log', 'a')
 			@file.sync = true
 		end
 	end
@@ -31,12 +39,13 @@ class Logger
 		string += messages
 		$stdout.puts(string)
 		if @general && log
+			init_file()
 			@file.puts(string)
 		end
 	end
 
 	def close()
-		if @general
+		if @file != nil && !@file.closed?()
 			@file.close()
 		end
 	end
