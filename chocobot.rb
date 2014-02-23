@@ -49,13 +49,12 @@ class Chocobot
 			if data != nil
 				data.strip!()
 				#puts data
-				if data.index("PING :") != nil
+				case(data.split(" ")[1])
+				when "PING"
 					ping()
-				end
-				if data.index(' MODE ') != nil
-					#TODO
-				end
-				if data.index(' PRIVMSG ') != nil
+				when "MODE"
+					#todo
+				when "PRIVMSG"
 					nick = data.split('!')[0][1..-1]
 					channel = data.split(' PRIVMSG ')[1].split(' :')[0]
 					msg = data.split(' PRIVMSG ')[1].split(' :')[1]
@@ -63,8 +62,7 @@ class Chocobot
 					if msg[0] == "!"
 						commands(nick, channel, msg)
 					end
-				end
-				if data.split(" ")[1] == '353'
+				when "353"
 					@logger.puts("Users: " + data.split(@channel + ' :')[1], @logger.joins())
 				end
 			end
