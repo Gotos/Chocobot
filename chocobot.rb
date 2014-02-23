@@ -26,6 +26,7 @@ class Chocobot
 	# Sends a Message to current channel
 	def message(msg)
 		@irc.puts("PRIVMSG " + @channel + " :" + msg)
+		@logger.puts(Settings.connection[:username] + ": " + msg)
 	end
 
 	def ping()
