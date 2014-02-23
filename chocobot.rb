@@ -21,6 +21,12 @@ class Chocobot
 		@logger = Logger.new()
 
 		@logger.puts("Initialization complete!", true)
+		trap("INT") {
+			@run = false
+			@irc.puts("PART " + @channel)
+			@logger.close()
+			@irc.close()
+		}
 	end
 
 	# Sends a Message to current channel
@@ -46,7 +52,16 @@ class Chocobot
 		message("Selftest complete.")
 		
 		while @run
-			data = @irc.gets()
+			# ctrl-c catching
+			begin
+				data = @irc.gets()
+			rescue IOError => e
+				if !@irc.closed?()
+					raise e
+				end
+				return
+			end
+
 			if data != nil
 				data.strip!()
 				#puts data
