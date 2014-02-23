@@ -44,11 +44,12 @@ class Chocobot
 	# Main-Loop
 	def main()
 		message("Selftest complete.")
+		
 		while @run
 			data = @irc.gets()
 			if data != nil
 				data.strip!()
-				puts data
+				#puts data
 				case(data.split(" ", 3)[1])
 				when "PING"
 					ping()
@@ -67,6 +68,7 @@ class Chocobot
 				end
 			end
 		end
+
 		@irc.puts("PART " + @channel)
 		@logger.close()
 		@irc.close()
