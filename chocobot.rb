@@ -48,22 +48,22 @@ class Chocobot
 			data = @irc.gets()
 			if data != nil
 				data.strip!()
-				#puts data
-				case(data.split(" ")[1])
+				puts data
+				case(data.split(" ", 3)[1])
 				when "PING"
 					ping()
 				when "MODE"
 					#todo
 				when "PRIVMSG"
-					nick = data.split('!')[0][1..-1]
-					channel = data.split(' PRIVMSG ')[1].split(' :')[0]
-					msg = data.split(' PRIVMSG ')[1].split(' :')[1]
+					nick = data.split('!', 2)[0][1..-1]
+					channel = data.split(' ', 3)[2].split(' :', 2)[0]
+					msg = data.split(' ', 3)[2].split(' :', 2)[1]
 					@logger.puts(nick + ": " + msg, @logger.messages())
 					if msg[0] == "!"
 						commands(nick, channel, msg)
 					end
 				when "353"
-					@logger.puts("Users: " + data.split(@channel + ' :')[1], @logger.joins())
+					@logger.puts("Users: " + data.split(@channel + ' :', 2)[1], @logger.joins())
 				end
 			end
 		end
