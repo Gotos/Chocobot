@@ -83,10 +83,10 @@ class Chocobot
 					if channel.downcase == @channel
 						if meta[1] == "+o"
 							@ops.add(nick)
-							@logger.puts("OP: " + user, @logger.op())
+							@logger.puts("OP: " + nick, @logger.op())
 						elsif meta[1] == "-o"
 							@ops.delete(nick)
-							@logger.puts("DEOP: " + user, @logger.op())
+							@logger.puts("DEOP: " + nick, @logger.op())
 						end
 					end
 				when "PRIVMSG"
