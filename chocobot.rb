@@ -17,7 +17,7 @@ class Chocobot
 		@username = concon[:username].downcase
 		@irc.puts("NICK " + @username)
 		@channel = concon[:channel].downcase
-		#@irc.puts("TWITCHCLIENT 2")
+		@irc.puts("TWITCHCLIENT 1")
 		@irc.write("JOIN " + @channel + "\n")
 		@run = true
 
@@ -73,6 +73,7 @@ class Chocobot
 				#puts data
 				baseTriple = data.split(' ',3)
 				if baseTriple[0] == "PING"
+					p "pong"
 					ping(baseTriple[1])
 				end
 				case(baseTriple[1])
@@ -90,7 +91,7 @@ class Chocobot
 						end
 					end
 				when "PRIVMSG"
-					nick = data.split('!', 2)[0][1..-1]
+					nick = baseTriple[0].split('!', 2)[0][1..-1]
 					meta = baseTriple[2].split(' :', 2)
 					channel = meta[0]
 					msg = meta[1]
@@ -100,7 +101,11 @@ class Chocobot
 							commands(nick, channel, msg)
 						end
 					elsif channel.downcase == @username
-						@logger.puts("PRIV: " + nick + ": " + msg, @logger.messages())
+						if nick == "jtv"
+							#Statuszeugs wie subs
+						else
+							@logger.puts("PRIV: " + nick + ": " + msg, @logger.messages())
+						end
 					end
 				when "353"
 					channel = baseTriple[2].split(' :', 2)[0]
