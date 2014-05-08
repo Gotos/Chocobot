@@ -68,7 +68,7 @@ class Chocobot
 
 			if data != nil
 				data.strip!()
-				puts data
+				#puts data
 				baseTriple = data.split(' ',3)
 				case(baseTriple[1])
 				when "PING"
