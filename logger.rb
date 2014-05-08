@@ -8,6 +8,10 @@ class Logger
 		@joins		= logcon[:joins]
 		@op			= logcon[:op]
 		@messages	= logcon[:messages]
+		@ts			= logcon[:timestamp]
+		@tsp		= logcon[:timestampPre]
+		@tss		= logcon[:timestampSuf]
+
 	end
 
 	def init_file()
@@ -35,7 +39,7 @@ class Logger
 	end
 
 	def puts(messages, log = false)
-		string = "<" + Time.new().strftime("%H:%M:%S") + "> "
+		string = @tsp + Time.new().strftime(@ts) + @tss + " "
 		string += messages
 		$stdout.puts(string)
 		if @general && log
