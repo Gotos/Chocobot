@@ -17,6 +17,7 @@ class Chocobot
 		@username = concon[:username].downcase
 		@irc.puts("NICK " + @username)
 		@channel = concon[:channel].downcase
+		#@irc.puts("TWITCHCLIENT 2")
 		@irc.write("JOIN " + @channel + "\n")
 		@run = true
 
@@ -39,8 +40,8 @@ class Chocobot
 		@logger.puts(Settings.connection[:username] + ": " + msg)
 	end
 
-	def ping()
-		@irc.puts("PONG :Pong")
+	def ping(text)
+		@irc.puts("PONG " + text)
 	end
 
 	def commands(nick, channel, msg)
@@ -71,9 +72,10 @@ class Chocobot
 				data.strip!()
 				#puts data
 				baseTriple = data.split(' ',3)
+				if baseTriple[0] == "PING"
+					ping(baseTriple[1])
+				end
 				case(baseTriple[1])
-				when "PING"
-					ping()
 				when "MODE"
 					meta = baseTriple[2].split(' ', 3)
 					channel = meta[0]
