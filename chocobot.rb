@@ -68,12 +68,13 @@ class Chocobot
 
 			if data != nil
 				data.strip!()
-				#puts data
-				case(data.split(" ", 3)[1])
+				puts data
+				baseTriple = data.split(' ',3)
+				case(baseTriple[1])
 				when "PING"
 					ping()
 				when "MODE"
-					meta = data.split(' ', 3)[2].split(' ', 3)
+					meta = baseTriple[2].split(' ', 3)
 					channel = meta[0]
 					nick = meta[2]
 					if channel.downcase == @channel
@@ -85,8 +86,9 @@ class Chocobot
 					end
 				when "PRIVMSG"
 					nick = data.split('!', 2)[0][1..-1]
-					channel = data.split(' ', 3)[2].split(' :', 2)[0]
-					msg = data.split(' ', 3)[2].split(' :', 2)[1]
+					meta = baseTriple[2].split(' :', 2)
+					channel = meta[0]
+					msg = meta[1]
 					if channel.downcase == @channel
 						@logger.puts(nick + ": " + msg, @logger.messages())
 						if msg[0] == "!"
@@ -99,7 +101,7 @@ class Chocobot
 					@logger.puts("USERS: " + data.split(@channel + ' :', 2)[1], @logger.joins())
 				when "PART"
 					nick = data.split('!', 2)[0][1..-1]
-					channel = data.split(' ', 3)[2].split(' :', 2)[0]
+					channel = baseTriple[2].split(' :', 2)[0]
 					if channel.downcase == @channel
 						@logger.puts("PART: " + nick, @logger.joins())
 					end
