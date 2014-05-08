@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'socket'
+require 'set'
 require './settings.rb'
 require './logger.rb'
 
@@ -13,10 +14,13 @@ class Chocobot
 		@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
 		@irc.connect(Socket.pack_sockaddr_in(concon[:port], concon[:host]))
 		@irc.puts("PASS " + concon[:oauth])
-		@irc.puts("NICK " + concon[:username])
-		@channel = concon[:channel]
+		@username = concon[:username].downcase
+		@irc.puts("NICK " + @username)
+		@channel = concon[:channel].downcase
 		@irc.write("JOIN " + @channel + "\n")
 		@run = true
+
+		@ops = Set.new([@username])
 
 		@logger = Logger.new()
 
@@ -49,7 +53,7 @@ class Chocobot
 
 	# Main-Loop
 	def main()
-		message("Selftest complete.")
+		#message("Selftest complete.")
 		
 		while @run
 			# ctrl-c catching
@@ -69,17 +73,32 @@ class Chocobot
 				when "PING"
 					ping()
 				when "MODE"
-					#todo
+					meta = data.split(' ', 3)[2].split(' ', 3)
+					channel = meta[0]
+					nick = meta[2]
+					if channel.downcase == @channel
+						if meta[1] == "+o"
+							@ops.add(nick)
+						elsif meta[1] == "-o"
+							@ops.delete(nick)
+						end
+					end
 				when "PRIVMSG"
 					nick = data.split('!', 2)[0][1..-1]
 					channel = data.split(' ', 3)[2].split(' :', 2)[0]
 					msg = data.split(' ', 3)[2].split(' :', 2)[1]
-					@logger.puts(nick + ": " + msg, @logger.messages())
+					if channel.downcase == @channel
+						@logger.puts(nick + ": " + msg, @logger.messages())
+					elsif channel.downcase == @username
+						@logger.puts("PRIV: " + nick + ": " + msg, @logger.messages())
+					end
 					if msg[0] == "!"
 						commands(nick, channel, msg)
 					end
 				when "353"
 					@logger.puts("Users: " + data.split(@channel + ' :', 2)[1], @logger.joins())
+				else
+					#puts data
 				end
 			end
 		end
