@@ -98,7 +98,10 @@ class Chocobot
 						@logger.puts("PRIV: " + nick + ": " + msg, @logger.messages())
 					end
 				when "353"
-					@logger.puts("USERS: " + data.split(@channel + ' :', 2)[1], @logger.joins())
+					channel = baseTriple[2].split(' :', 2)[0]
+					if channel.downcase == @channel
+						@logger.puts("USERS: " + data.split(@channel + ' :', 2)[1], @logger.joins())
+					end
 				when "PART"
 					nick = data.split('!', 2)[0][1..-1]
 					channel = baseTriple[2].split(' :', 2)[0]
@@ -107,7 +110,7 @@ class Chocobot
 					end
 				when "JOIN"
 					nick = data.split('!', 2)[0][1..-1]
-					channel = data.split(' ', 3)[2].split(' :', 2)[0]
+					channel = baseTriple[2].split(' :', 2)[0]
 					if channel.downcase == @channel
 						@logger.puts("JOIN: " + nick, @logger.joins())
 					end
