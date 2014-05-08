@@ -89,11 +89,11 @@ class Chocobot
 					msg = data.split(' ', 3)[2].split(' :', 2)[1]
 					if channel.downcase == @channel
 						@logger.puts(nick + ": " + msg, @logger.messages())
+						if msg[0] == "!"
+							commands(nick, channel, msg)
+						end
 					elsif channel.downcase == @username
 						@logger.puts("PRIV: " + nick + ": " + msg, @logger.messages())
-					end
-					if msg[0] == "!"
-						commands(nick, channel, msg)
 					end
 				when "353"
 					@logger.puts("USERS: " + data.split(@channel + ' :', 2)[1], @logger.joins())
