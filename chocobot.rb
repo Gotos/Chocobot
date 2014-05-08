@@ -96,7 +96,7 @@ class Chocobot
 						commands(nick, channel, msg)
 					end
 				when "353"
-					@logger.puts("Users: " + data.split(@channel + ' :', 2)[1], @logger.joins())
+					@logger.puts("USERS: " + data.split(@channel + ' :', 2)[1], @logger.joins())
 				when "PART"
 					nick = data.split('!', 2)[0][1..-1]
 					channel = data.split(' ', 3)[2].split(' :', 2)[0]
