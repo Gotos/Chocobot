@@ -5,3 +5,12 @@ connection:
   username: 'gRuFtBoT'
   channel: '#gruftbot'
 
+logging:
+  timestamp: '%H:%M:%S'
+  timestampPre: '<'
+  timestampSuf: '>'
+  general: true
+  messages: true
+  joins: true
+  op: true
+
