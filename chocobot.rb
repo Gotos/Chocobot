@@ -44,6 +44,9 @@ class Chocobot
 	end
 
 	def commands(nick, channel, msg)
+		if !@ops.include?(nick)
+			return
+		end
 		case msg.split()[0]
 		when "!exit"
 			@logger.puts("Exiting...", true)
