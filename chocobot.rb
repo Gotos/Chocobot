@@ -121,7 +121,7 @@ class Chocobot
 						end
 					end
 				when "353"
-					channel = baseTriple[2].split(' :', 2)[0]
+					channel = baseTriple[2].split(' :', 2)[0].split(' = ', 2)[1]
 					if channel.downcase == @channel
 						@logger.puts("USERS: " + data.split(@channel + ' :', 2)[1], @logger.joins())
 					end
