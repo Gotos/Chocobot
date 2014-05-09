@@ -4,6 +4,7 @@ require 'set'
 require './settings.rb'
 require './logger.rb'
 require './messager.rb'
+require './timer.rb'
 
 class Chocobot
 
@@ -12,21 +13,23 @@ class Chocobot
 
 		# Connect
 		concon = Settings.connection
+		@logger = Logger.new()
 		
 		
 		@username = concon[:username].downcase
 		@channel = concon[:channel].downcase
-		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel)
+		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger)
 		@run = true
 
 		@ops = Set.new([@username])
 		@subs = Set.new()
 
-		@logger = Logger.new()
+		@timer = Timer.new(@messager)
 
 		@logger.puts("Initialization complete!", true)
 		trap("INT") {
 			@run = false
+			@timer.run = false
 			@messager.stop()
 			@logger.close()
 		}
@@ -35,7 +38,6 @@ class Chocobot
 	# Sends a Message to current channel
 	def message(msg)
 		@messager.message(msg)
-		@logger.puts(Settings.connection[:username] + ": " + msg)
 	end
 
 	def ping(text)
@@ -59,6 +61,7 @@ class Chocobot
 	# Main-Loop
 	def main()
 		#message("Selftest complete.")
+		#@timer.add("test", "Hallo!", 5, 1)
 		
 		while @run
 			# ctrl-c catching
@@ -98,6 +101,7 @@ class Chocobot
 					channel = meta[0]
 					msg = meta[1]
 					if channel.downcase == @channel
+						@timer.newMsg()
 						if @subs.include?(nick)
 							@logger.puts("SUB " + nick + ": " + msg, @logger.messages())
 						else
@@ -143,6 +147,7 @@ class Chocobot
 				end
 			end
 		end
+		@timer.run = false
 		@messager.stop
 		@logger.close()
 	end

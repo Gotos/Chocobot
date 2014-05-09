@@ -4,7 +4,7 @@ class Messager
 
 	attr_accessor :queue
 
-	def initialize(host, port, oauth, username, channel)
+	def initialize(host, port, oauth, username, channel, logger)
 		@queue = Queue.new
 		@stop = false
 		@run = true
@@ -13,6 +13,7 @@ class Messager
 
 		@channel = channel
 		@username = username
+		@logger = logger
 
 		@write_mutex.synchronize do
 			@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
@@ -49,6 +50,7 @@ class Messager
 	end
 
 	def message(msg)
+		@logger.puts(@username + ": " + msg)
 		@queue << ("PRIVMSG " + @channel + " :" + msg)
 	end
 
