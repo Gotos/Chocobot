@@ -50,7 +50,7 @@ class Messager
 	end
 
 	def message(msg)
-		@logger.puts(@username + ": " + msg)
+		@logger.puts(@username + ": " + msg, @logger.messages)
 		@queue << ("PRIVMSG " + @channel + " :" + msg)
 	end
 
