@@ -4,24 +4,36 @@ class Messager
 
 	attr_accessor :queue
 
-	def initialize(irc, channel)
+	def initialize(host, port, oauth, username, channel)
 		@queue = Queue.new
-		@irc = irc
-		@channel = channel
 		@stop = false
 		@run = true
+		@write_mutex = Mutex.new
+
+
+		@channel = channel
+		@username = username
+
+		@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
+		@irc.connect(Socket.pack_sockaddr_in(port, host))
+		@irc.puts("PASS " + oauth)
+		@irc.puts("NICK " + @username)
+		@irc.puts("TWITCHCLIENT 1")
+		@irc.write("JOIN " + @channel + "\n")
+
+
 		Thread.new do
 			while @run
-				element = @queue.pop() rescue nil
-				p "GOT HERE"
-				p element
+				element = @queue.pop(true) rescue nil
 				if element != nil
-					p "PRE"
-					@irc.puts(element)
-					p "POST"
+					@write_mutex.synchronize do
+						@irc.puts(element)
+					end
 					sleep(2)
 				elsif @stop
 					@run = false
+					@irc.puts("PART " + @channel)
+					@irc.close()
 				end	
 			end
 		end
@@ -39,7 +51,17 @@ class Messager
 	end
 
 	def raw(msg)
-		@queue << msg
+		@write_mutex.synchronize do
+			@irc.puts(msg)
+		end
+	end
+
+	def gets()
+		return @irc.gets()
+	end
+
+	def closed?()
+		return @irc.closed?()
 	end
 
 end
