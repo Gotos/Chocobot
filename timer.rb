@@ -5,17 +5,17 @@ class Timer
 	def initialize(messager)
 		@messager = messager
 		@msgCount = 0
+		@time = 0
 		@run = true
 		@timers = {}
 		@timers_mutex = Mutex.new
 
 		Thread.new do
 			while @run
-				now = Time.new().to_i
 				@timers_mutex.synchronize do
 					@timers.each_value do |timerEvent|
-						if timerEvent.time + timerEvent.t <= now
-							timerEvent.t = now
+						if timerEvent.time + timerEvent.t <= @time
+							timerEvent.t = @time
 							if timerEvent.messagesPassed + timerEvent.mc <= @msgCount
 								timerEvent.mc = @msgCount
 								messager.message(timerEvent.msg)
@@ -23,7 +23,8 @@ class Timer
 						end
 					end
 				end
-				sleep(1)
+				sleep(60)
+				@time += 1
 			end
 		end
 	end
@@ -54,7 +55,7 @@ class TimedEvent
 		@msg = msg
 		@time = time
 		@messagesPassed = messagesPassed
-		@t = 0
+		@t = -1
 		@mc = -1
 	end
 end
