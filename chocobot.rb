@@ -47,11 +47,22 @@ class Chocobot
 	def commands(nick, channel, msg)
 		priv = @ops.include?(nick)
 		sub = priv || @subs.include?(nick)
-		case msg.split(' ')[0]
+		data = msg.split(' ')
+		case data[0]
 		when "!exit"
 			if priv
 				@logger.puts("Exiting...", true)
 				@run = false
+			end
+		when "!timeradd"
+			if priv
+				@timer.add(data[1], data[4..-1].join(" "), data[2].to_i, data[3].to_i)
+				message("Timer " + data[1] + " wurde gesetzt mit dem Zeitintervall " + data[2].to_i.to_s + " Minute(n) und dem Nachrichtenintervall " + data[3].to_i.to_s + ".")
+			end
+		when "!timerrem"
+			if priv
+				@timer.remove(data[1])
+				message("Timer " + data[1] + " wurde entfernt.")
 			end
 		when "!ping"
 			message("Pong!")
