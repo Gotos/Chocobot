@@ -22,6 +22,7 @@ class Chocobot
 		@run = true
 
 		@ops = Set.new([@username])
+		@subs = Set.new()
 
 		@logger = Logger.new()
 
@@ -46,6 +47,7 @@ class Chocobot
 
 	def commands(nick, channel, msg)
 		priv = @ops.include?(nick)
+		sub = priv || @subs.include?(nick)
 		case msg.split()[0]
 		when "!exit" && priv
 			@logger.puts("Exiting...", true)
@@ -96,13 +98,24 @@ class Chocobot
 					channel = meta[0]
 					msg = meta[1]
 					if channel.downcase == @channel
-						@logger.puts(nick + ": " + msg, @logger.messages())
+						if @subs.include?(nick)
+							@logger.puts("SUB " + nick + ": " + msg, @logger.messages())
+						else
+							@logger.puts(nick + ": " + msg, @logger.messages())
+						end
 						if msg[0] == "!"
 							commands(nick, channel, msg)
 						end
+						@subs.delete(nick)
 					elsif channel.downcase == @username
 						if nick == "jtv"
-							#Statuszeugs wie subs
+							info = msg.split(" ")
+							case(info[0])
+							when "SPECIALUSER"
+								if info[2] == "subscriber"
+									@subs.add(info[1])
+								end
+							end
 						else
 							@logger.puts("PRIV: " + nick + ": " + msg, @logger.messages())
 						end
@@ -116,6 +129,7 @@ class Chocobot
 					nick = data.split('!', 2)[0][1..-1]
 					channel = baseTriple[2].split(' :', 2)[0]
 					if channel.downcase == @channel
+						@subs.delete(nick)
 						@logger.puts("PART: " + nick, @logger.joins())
 					end
 				when "JOIN"
