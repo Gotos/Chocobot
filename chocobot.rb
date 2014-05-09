@@ -12,15 +12,11 @@ class Chocobot
 
 		# Connect
 		concon = Settings.connection
-		@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-		@irc.connect(Socket.pack_sockaddr_in(concon[:port], concon[:host]))
-		@irc.puts("PASS " + concon[:oauth])
+		
+		
 		@username = concon[:username].downcase
-		@irc.puts("NICK " + @username)
 		@channel = concon[:channel].downcase
-		@irc.puts("TWITCHCLIENT 1")
-		@irc.write("JOIN " + @channel + "\n")
-		@messager = Messager.new(@irc, @channel)
+		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel)
 		@run = true
 
 		@ops = Set.new([@username])
@@ -32,9 +28,7 @@ class Chocobot
 		trap("INT") {
 			@run = false
 			@messager.stop()
-			@irc.puts("PART " + @channel)
 			@logger.close()
-			@irc.close()
 		}
 	end
 
@@ -69,9 +63,9 @@ class Chocobot
 		while @run
 			# ctrl-c catching
 			begin
-				data = @irc.gets()
+				data = @messager.gets()
 			rescue IOError => e
-				if !@irc.closed?()
+				if !@messager.closed?()
 					raise e
 				end
 				return
@@ -150,9 +144,7 @@ class Chocobot
 			end
 		end
 		@messager.stop
-		@irc.puts("PART " + @channel)
 		@logger.close()
-		@irc.close()
 	end
 end
 
