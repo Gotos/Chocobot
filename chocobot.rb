@@ -51,10 +51,12 @@ class Chocobot
 	def commands(nick, channel, msg)
 		priv = @ops.include?(nick)
 		sub = priv || @subs.include?(nick)
-		case msg.split()[0]
-		when "!exit" && priv
-			@logger.puts("Exiting...", true)
-			@run = false
+		case msg.split(' ')[0]
+		when "!exit"
+			if priv
+				@logger.puts("Exiting...", true)
+				@run = false
+			end
 		when "!ping"
 			message("Pong!")
 		end
@@ -62,7 +64,7 @@ class Chocobot
 
 	# Main-Loop
 	def main()
-		message("Selftest complete.")
+		#message("Selftest complete.")
 		
 		while @run
 			# ctrl-c catching
