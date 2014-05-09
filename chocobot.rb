@@ -75,7 +75,6 @@ class Chocobot
 				#puts data
 				baseTriple = data.split(' ',3)
 				if baseTriple[0] == "PING"
-					p "pong"
 					ping(data.split(' ',2)[1])
 				end
 				case(baseTriple[1])
