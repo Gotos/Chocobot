@@ -3,6 +3,7 @@ require 'socket'
 require 'set'
 require './settings.rb'
 require './logger.rb'
+require './messager.rb'
 
 class Chocobot
 
@@ -19,6 +20,7 @@ class Chocobot
 		@channel = concon[:channel].downcase
 		@irc.puts("TWITCHCLIENT 1")
 		@irc.write("JOIN " + @channel + "\n")
+		@messager = Messager.new(@irc, @channel)
 		@run = true
 
 		@ops = Set.new([@username])
@@ -29,6 +31,7 @@ class Chocobot
 		@logger.puts("Initialization complete!", true)
 		trap("INT") {
 			@run = false
+			@messager.stop()
 			@irc.puts("PART " + @channel)
 			@logger.close()
 			@irc.close()
@@ -37,12 +40,12 @@ class Chocobot
 
 	# Sends a Message to current channel
 	def message(msg)
-		@irc.puts("PRIVMSG " + @channel + " :" + msg)
+		@messager.message(msg)
 		@logger.puts(Settings.connection[:username] + ": " + msg)
 	end
 
 	def ping(text)
-		@irc.puts("PONG " + text)
+		@messager.raw("PONG " + text)
 	end
 
 	def commands(nick, channel, msg)
@@ -52,12 +55,14 @@ class Chocobot
 		when "!exit" && priv
 			@logger.puts("Exiting...", true)
 			@run = false
+		when "!ping"
+			message("Pong!")
 		end
 	end
 
 	# Main-Loop
 	def main()
-		#message("Selftest complete.")
+		message("Selftest complete.")
 		
 		while @run
 			# ctrl-c catching
@@ -142,7 +147,7 @@ class Chocobot
 				end
 			end
 		end
-
+		@messager.stop
 		@irc.puts("PART " + @channel)
 		@logger.close()
 		@irc.close()
