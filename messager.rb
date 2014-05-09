@@ -14,12 +14,14 @@ class Messager
 		@channel = channel
 		@username = username
 
-		@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-		@irc.connect(Socket.pack_sockaddr_in(port, host))
-		@irc.puts("PASS " + oauth)
-		@irc.puts("NICK " + @username)
-		@irc.puts("TWITCHCLIENT 1")
-		@irc.write("JOIN " + @channel + "\n")
+		@write_mutex.synchronize do
+			@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
+			@irc.connect(Socket.pack_sockaddr_in(port, host))
+			@irc.puts("PASS " + oauth)
+			@irc.puts("NICK " + @username)
+			@irc.puts("TWITCHCLIENT 1")
+			@irc.write("JOIN " + @channel + "\n")
+		end
 
 
 		Thread.new do
