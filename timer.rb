@@ -10,6 +10,12 @@ class Timer
 		@time = 0
 		@run = true
 
+		TimedEvent.all.each do |timerEvent|
+			timerEvent.t = 0
+			timerEvent.mc = 0
+			timerEvent.save
+		end
+
 		Thread.new do
 			while @run
 				TimedEvent.all.each do |timerEvent|
@@ -20,6 +26,7 @@ class Timer
 							messager.message(timerEvent.msg)
 						end
 					end
+					timerEvent.save
 				end
 				sleep(60)
 				@time += 1
@@ -28,7 +35,7 @@ class Timer
 	end
 
 	def add(name, msg, time, messagesPassed)
-		TimedEvent.create(:name => name, :msg => msg, :time => time, :messagesPassed => messagesPassed)
+		TimedEvent.create(:name => name, :msg => msg, :time => time, :messagesPassed => messagesPassed, :t => time, :mc => messagesPassed)
 	end
 
 	def remove(name)
