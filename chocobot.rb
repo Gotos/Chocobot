@@ -5,17 +5,21 @@ require './settings.rb'
 require './logger.rb'
 require './messager.rb'
 require './timer.rb'
+require 'rubygems'
+require 'data_mapper'
 
 class Chocobot
 
 	# Initialize
 	def initialize()
 
-		# Connect
 		concon = Settings.connection
 		@logger = Logger.new()
-		
-		
+
+		# Database connection
+		DataMapper.setup(:default, Settings.database[:connection])
+
+		# Connect
 		@username = concon[:username].downcase
 		@channel = concon[:channel].downcase
 		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger)

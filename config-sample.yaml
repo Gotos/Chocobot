@@ -5,6 +5,9 @@ connection:
   username: 'gRuFtBoT'
   channel: '#gruftbot'
 
+database:
+  connection: 'sqlite://chocobot.db'
+
 logging:
   timestamp: '%H:%M:%S'
   timestampPre: '<'

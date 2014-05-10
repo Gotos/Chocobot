@@ -1,0 +1,3 @@
+INSTALL:
+
+Install data_mapper via Rubygems ('gem install data_mapper') and DataMappers adapter for the database you'd like to use, e.g. 'gem install dm-sqlite-adapter'.
