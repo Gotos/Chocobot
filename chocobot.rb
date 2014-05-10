@@ -18,6 +18,10 @@ class Chocobot
 
 		# Database connection
 		DataMapper.setup(:default, Settings.database[:connection])
+		require './Models/TimedEvent.rb'
+		DataMapper.auto_upgrade!
+		DataMapper.finalize
+
 
 		# Connect
 		@username = concon[:username].downcase

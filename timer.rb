@@ -1,3 +1,5 @@
+require './Models/TimedEvent.rb'
+
 class Timer
 
 	attr_accessor :run
@@ -7,19 +9,15 @@ class Timer
 		@msgCount = 0
 		@time = 0
 		@run = true
-		@timers = {}
-		@timers_mutex = Mutex.new
 
 		Thread.new do
 			while @run
-				@timers_mutex.synchronize do
-					@timers.each_value do |timerEvent|
-						if timerEvent.time + timerEvent.t <= @time
-							timerEvent.t = @time
-							if timerEvent.messagesPassed + timerEvent.mc <= @msgCount
-								timerEvent.mc = @msgCount
-								messager.message(timerEvent.msg)
-							end
+				TimedEvent.all.each do |timerEvent|
+					if timerEvent.time + timerEvent.t <= @time
+						timerEvent.t = @time
+						if timerEvent.messagesPassed + timerEvent.mc <= @msgCount
+							timerEvent.mc = @msgCount
+							messager.message(timerEvent.msg)
 						end
 					end
 				end
@@ -30,15 +28,11 @@ class Timer
 	end
 
 	def add(name, msg, time, messagesPassed)
-		@timers_mutex.synchronize do
-			@timers[name] = TimedEvent.new(msg, time, messagesPassed)
-		end
+		TimedEvent.create(:name => name, :msg => msg, :time => time, :messagesPassed => messagesPassed)
 	end
 
 	def remove(name)
-		@timers_mutex.synchronize do
-			@timers.delete(name)
-		end
+		TimedEvent.get(name).destroy()
 	end
 
 	def newMsg()
@@ -46,16 +40,16 @@ class Timer
 	end
 end
 
-class TimedEvent
-
-	attr_reader :msg, :time, :messagesPassed
-	attr_accessor :t, :mc
-
-	def initialize(msg, time, messagesPassed)
-		@msg = msg
-		@time = time
-		@messagesPassed = messagesPassed
-		@t = -1
-		@mc = -1
-	end
-end
+#class TimedEvent
+#
+#	attr_reader :msg, :time, :messagesPassed
+#	attr_accessor :t, :mc
+#
+#	def initialize(msg, time, messagesPassed)
+#		@msg = msg
+#		@time = time
+#		@messagesPassed = messagesPassed
+#		@t = -1
+#		@mc = -1
+#	end
+#end

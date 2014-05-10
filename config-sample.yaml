@@ -6,7 +6,7 @@ connection:
   channel: '#gruftbot'
 
 database:
-  connection: 'sqlite://chocobot.db'
+  connection: 'sqlite:///path/to/database.db'
 
 logging:
   timestamp: '%H:%M:%S'
