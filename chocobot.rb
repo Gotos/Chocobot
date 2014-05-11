@@ -18,7 +18,6 @@ class Chocobot
 
 		# Database connection
 		DataMapper.setup(:default, Settings.database[:connection])
-		require './Models/TimedEvent.rb'
 		DataMapper.auto_upgrade!
 		DataMapper.finalize
 
@@ -71,6 +70,11 @@ class Chocobot
 			if priv
 				@timer.remove(data[1])
 				message("Timer " + data[1] + " wurde entfernt.")
+			end
+		when "!timerlist"
+			if priv
+				names = @timer.timerList()
+				message("Folgende Timer sind installiert: " + names.join(" "))
 			end
 		when "!ping"
 			message("Pong!")

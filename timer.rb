@@ -45,6 +45,14 @@ class Timer
 	def newMsg()
 		@msgCount += 1
 	end
+
+	def timerList()
+		names = []
+		TimedEvent.all.each do |timerEvent|
+			names << timerEvent.name
+		end
+		return names
+	end
 end
 
 #class TimedEvent
