@@ -5,6 +5,7 @@ require './settings.rb'
 require './logger.rb'
 require './messager.rb'
 require './timer.rb'
+require './pluginLoader.rb'
 require 'rubygems'
 require 'data_mapper'
 
@@ -18,25 +19,25 @@ class Chocobot
 
 		# Database connection
 		DataMapper.setup(:default, Settings.database[:connection])
+
+		@plugins = PluginLoader.new()
+
 		DataMapper.auto_upgrade!
 		DataMapper.finalize
-
 
 		# Connect
 		@username = concon[:username].downcase
 		@channel = concon[:channel].downcase
 		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger)
+		@plugins.boot(@messager, @logger)
 		@run = true
 
 		@ops = Set.new([@username])
 		@subs = Set.new()
 
-		@timer = Timer.new(@messager)
-
 		@logger.puts("Initialization complete!", true)
 		trap("INT") {
 			@run = false
-			@timer.run = false
 			@messager.stop()
 			@logger.close()
 		}
@@ -52,33 +53,53 @@ class Chocobot
 	end
 
 	def commands(nick, channel, msg)
-		priv = @ops.include?(nick)
-		sub = priv || @subs.include?(nick)
-		data = msg.split(' ')
-		case data[0]
-		when "!exit"
-			if priv
-				@logger.puts("Exiting...", true)
-				@run = false
-			end
-		when "!timeradd"
-			if priv
-				@timer.add(data[1], data[4..-1].join(" "), data[2].to_i, data[3].to_i)
-				message("Timer " + data[1] + " wurde gesetzt mit dem Zeitintervall " + data[2].to_i.to_s + " Minute(n) und dem Nachrichtenintervall " + data[3].to_i.to_s + ".")
-			end
-		when "!timerrem"
-			if priv
-				@timer.remove(data[1])
-				message("Timer " + data[1] + " wurde entfernt.")
-			end
-		when "!timerlist"
-			if priv
-				names = @timer.timerList()
-				message("Folgende Timer sind installiert: " + names.join(" "))
-			end
-		when "!ping"
-			message("Pong!")
+		if nick == @channel[1..-1]
+			priv = 0
+		elsif @ops.include?(nick)
+			priv = 10
+		elsif @subs.include?(nick)
+			priv = 20
+		else
+			priv = 30
 		end
+		data = msg.split(' ')
+		cmd = data[0]
+		cmdExecuted = false
+
+		for command in @plugins.preCommands
+			if cmd == command.cmd
+				if command.run(data[1..-1], priv)
+					cmdExecuted = true
+					break
+				end
+			end
+		end
+
+		if !cmdExecuted
+			cmdExecuted = true
+			case data[0]
+			when "!exit"
+				if priv <=10
+					@logger.puts("Exiting...", true)
+					@run = false
+				end
+			when "!ping"
+				message("Pong!")
+			else
+				cmdExecuted = false
+			end
+		end
+
+		if !cmdExecuted
+			for command in @plugins.postCommands
+				if cmd == command.cmd
+					if command.run(data[1..-1], priv)
+					break
+				end
+				end
+			end
+		end
+
 	end
 
 	# Main-Loop
@@ -124,7 +145,7 @@ class Chocobot
 					channel = meta[0]
 					msg = meta[1]
 					if channel.downcase == @channel
-						@timer.newMsg()
+						@plugins.newMsg()
 						if @subs.include?(nick)
 							@logger.puts("SUB " + nick + ": " + msg, @logger.messages())
 						else
@@ -170,7 +191,6 @@ class Chocobot
 				end
 			end
 		end
-		@timer.run = false
 		@messager.stop
 		@logger.close()
 	end
