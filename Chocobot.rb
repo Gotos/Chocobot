@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'socket'
 require 'set'
-require './settings.rb'
-require './logger.rb'
-require './messager.rb'
-require './pluginLoader.rb'
+require './Settings.rb'
+require './Logger.rb'
+require './Messager.rb'
+require './PluginLoader.rb'
 require 'rubygems'
 require 'data_mapper'
 

@@ -1,4 +1,4 @@
-require './settings.rb'
+require './Settings.rb'
 
 class Logger
 	def initialize()
