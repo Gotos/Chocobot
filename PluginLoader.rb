@@ -29,8 +29,16 @@ class PluginLoader
 		@@postCommands << cmd
 	end
 
+	def self.removeCommand(cmd)
+		@@postCommands.delete(cmd)
+	end
+
 	def self.addPreCommand(cmd)
 		@@preCommands << cmd
+	end
+
+	def self.removePreCommand(cmd)
+		@@preCommands.delete(cmd)
 	end
 
 	def self.addNewMsg(plugin)
