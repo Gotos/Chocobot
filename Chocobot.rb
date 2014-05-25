@@ -65,7 +65,7 @@ class Chocobot
 		cmd = data[0]
 		cmdExecuted = false
 
-		for command in PluginLoader.preCommands
+		for command in PluginLoader.preCommands.values
 			if cmd == command.cmd
 				if command.run(data[1..-1], priv)
 					cmdExecuted = true
@@ -90,7 +90,7 @@ class Chocobot
 		end
 
 		if !cmdExecuted
-			for command in PluginLoader.postCommands
+			for command in PluginLoader.postCommands.values
 				if cmd == command.cmd
 					if command.run(data[1..-1], priv)
 					break

@@ -3,9 +3,11 @@ require './Command.rb'
 class PluginLoader
 
 	@@plugins = {}
-	@@preCommands = []
-	@@postCommands = []
+	@@preCommands = {}
+	@@postCommands = {}
+	@@commandIDs = {}
 	@@newMsg = []
+	@@random = Random.new
 
 	def self.load()
 		Dir.entries("Plugins").select do |f|
@@ -26,19 +28,28 @@ class PluginLoader
 	end
 
 	def self.addCommand(cmd)
-		@@postCommands << cmd
+		if @@commandIDs.key?(cmd.cmd)
+			return -1
+		else
+			@@postCommands[cmd.cmd] = cmd
+			id = @@random.rand(2**16)
+			@@commandIDs[cmd.cmd] = id
+			return id
+		end
 	end
 
-	def self.removeCommand(cmd)
-		@@postCommands.delete(cmd)
+	def self.removeCommand(cmd, id)
+		if @@commandIDs[cmd] == id and id >= 0
+			@@postCommands.delete(cmd)
+			@@preCommands.delete(cmd)
+			@@commandIDs.delete(cmd)
+			return true
+		end
+		return false
 	end
 
 	def self.addPreCommand(cmd)
-		@@preCommands << cmd
-	end
-
-	def self.removePreCommand(cmd)
-		@@preCommands.delete(cmd)
+		@@preCommands[cmd.cmd] = cmd
 	end
 
 	def self.addNewMsg(plugin)
