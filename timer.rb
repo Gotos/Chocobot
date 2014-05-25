@@ -47,7 +47,8 @@ class Timer
 	end
 
 	def remove(name)
-		TimedEvent.get(name).destroy()
+		entry = TimedEvent.get(name)
+		entry.destroy() if entry != nil
 	end
 
 	def newMsg()
