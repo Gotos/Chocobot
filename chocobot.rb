@@ -4,7 +4,6 @@ require 'set'
 require './settings.rb'
 require './logger.rb'
 require './messager.rb'
-require './timer.rb'
 require './pluginLoader.rb'
 require 'rubygems'
 require 'data_mapper'
@@ -20,7 +19,7 @@ class Chocobot
 		# Database connection
 		DataMapper.setup(:default, Settings.database[:connection])
 
-		@plugins = PluginLoader.new()
+		PluginLoader.load()
 
 		DataMapper.auto_upgrade!
 		DataMapper.finalize
@@ -29,7 +28,7 @@ class Chocobot
 		@username = concon[:username].downcase
 		@channel = concon[:channel].downcase
 		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger)
-		@plugins.boot(@messager, @logger)
+		PluginLoader.boot(@messager, @logger)
 		@run = true
 
 		@ops = Set.new([@username])
@@ -66,7 +65,7 @@ class Chocobot
 		cmd = data[0]
 		cmdExecuted = false
 
-		for command in @plugins.preCommands
+		for command in PluginLoader.preCommands
 			if cmd == command.cmd
 				if command.run(data[1..-1], priv)
 					cmdExecuted = true
@@ -91,7 +90,7 @@ class Chocobot
 		end
 
 		if !cmdExecuted
-			for command in @plugins.postCommands
+			for command in PluginLoader.postCommands
 				if cmd == command.cmd
 					if command.run(data[1..-1], priv)
 					break
@@ -145,7 +144,7 @@ class Chocobot
 					channel = meta[0]
 					msg = meta[1]
 					if channel.downcase == @channel
-						@plugins.newMsg()
+						PluginLoader.newMsg()
 						if @subs.include?(nick)
 							@logger.puts("SUB " + nick + ": " + msg, @logger.messages())
 						else

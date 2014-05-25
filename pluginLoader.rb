@@ -1,34 +1,55 @@
-require "./timer.rb"
-
 class PluginLoader
-	attr_reader :preCommands, :postCommands
 
-	def initialize
-		@preCommands = []
-		@postCommands = []
-		@newMsg = []
-		Timer.addPlugin(self)
+	@@plugins = {}
+	@@preCommands = []
+	@@postCommands = []
+	@@newMsg = []
+
+	def self.load()
+		Dir.entries("Plugins").select do |f|
+			if File.directory? File.join('Plugins',f) and !(f =='.' || f == '..')
+				require "./Plugins/" + f + "/" + f + ".rb"
+			end
+		end
+		for plugin in @@plugins.values
+			plugin.addPlugin
+		end
 	end
 
-	def boot(messager, logger)
-		Timer.getInstance(messager, logger)
+	def self.boot(messager, logger)
+		for plugin in @@plugins.values
+			plugin.getInstance(messager, logger)
+		end
+		#Timer.getInstance(messager, logger)
 	end
 
-	def addCommand(cmd)
-		@postCommands << cmd
+	def self.addCommand(cmd)
+		@@postCommands << cmd
 	end
 
-	def addPreCommand(cmd)
-		@preCommands << cmd
+	def self.addPreCommand(cmd)
+		@@preCommands << cmd
 	end
 
-	def addNewMsg(plugin)
-		@newMsg << plugin
+	def self.addNewMsg(plugin)
+		@@newMsg << plugin
 	end
 
-	def newMsg()
-		for plugin in @newMsg
+	def self.newMsg()
+		for plugin in @@newMsg
 			plugin.getInstance.newMsg()
 		end
+	end
+
+	def self.registerPlugin(name, plugin)
+		@@plugins[name] = plugin
+	end
+
+	def self.preCommands
+		@@preCommands
+	end
+
+	def self.postCommands
+		@@postCommands
 	end
 end
