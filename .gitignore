@@ -1,3 +1,4 @@
 config.yaml
 *.log
 *.db
+*.sublime-*
