@@ -1,3 +1,5 @@
+require './Command.rb'
+
 class PluginLoader
 
 	@@plugins = {}
