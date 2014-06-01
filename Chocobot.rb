@@ -51,7 +51,7 @@ class Chocobot
 		@messager.raw("PONG " + text)
 	end
 
-	def commands(nick, channel, msg)
+	def commands(nick, msg)
 		if nick == @channel[1..-1]
 			priv = 0
 		elsif @ops.include?(nick)
@@ -67,7 +67,7 @@ class Chocobot
 
 		for command in PluginLoader.preCommands.values
 			if cmd == command.cmd
-				if command.run(data[1..-1], priv)
+				if command.run(data[1..-1], priv, nick)
 					cmdExecuted = true
 					break
 				end
@@ -92,7 +92,7 @@ class Chocobot
 		if !cmdExecuted
 			for command in PluginLoader.postCommands.values
 				if cmd == command.cmd
-					if command.run(data[1..-1], priv)
+					if command.run(data[1..-1], priv, nick)
 					break
 				end
 				end
@@ -144,14 +144,14 @@ class Chocobot
 					channel = meta[0]
 					msg = meta[1]
 					if channel.downcase == @channel
-						PluginLoader.newMsg()
+						PluginLoader.newMsg(msg)
 						if @subs.include?(nick)
 							@logger.puts("SUB " + nick + ": " + msg, @logger.messages())
 						else
 							@logger.puts(nick + ": " + msg, @logger.messages())
 						end
 						if msg[0] == "!"
-							commands(nick, channel, msg)
+							commands(nick, msg)
 						end
 						@subs.delete(nick)
 					elsif channel.downcase == @username

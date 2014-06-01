@@ -10,6 +10,7 @@ class PluginLoader
 	@@random = Random.new
 
 	def self.load()
+		Dir.mkdir("Plugins") if !Dir.exist?("Plugins")
 		Dir.entries("Plugins").select do |f|
 			if File.directory? File.join('Plugins',f) and !(f =='.' || f == '..')
 				require "./Plugins/" + f + "/" + f + ".rb"
@@ -56,9 +57,9 @@ class PluginLoader
 		@@newMsg << plugin
 	end
 
-	def self.newMsg()
+	def self.newMsg(msg)
 		for plugin in @@newMsg
-			plugin.getInstance.newMsg()
+			plugin.getInstance.newMsg(msg)
 		end
 	end
 

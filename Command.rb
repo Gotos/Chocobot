@@ -6,7 +6,7 @@ class Command
 		@run = func
 	end
 
-	def run(param, priv)
-		@run.call(param, priv)
+	def run(param, priv, user)
+		@run.call(param, priv, user)
 	end
 end
