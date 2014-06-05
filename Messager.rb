@@ -35,7 +35,9 @@ class Messager
 					@run = false
 					@irc.puts("PART " + @channel)
 					@irc.close()
-				end	
+				else
+					sleep(1)
+				end
 			end
 		end
 	end
@@ -59,6 +61,7 @@ class Messager
 		while @run
 			sleep(2)
 		end
+		@irc.close()
 	end
 
 	def ping()
