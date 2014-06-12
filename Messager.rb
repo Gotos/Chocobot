@@ -25,7 +25,9 @@ class Messager
 			while @run
 				element = @queue.pop(true) rescue nil
 				if @ping_time + 300 < Time.new()
+					@logger.puts("Reconnecting...", true)
 					connect()
+					@ping_time = Time.new()
 				elsif element != nil
 					@write_mutex.synchronize do
 						@irc.puts(element)
@@ -61,7 +63,7 @@ class Messager
 		while @run
 			sleep(2)
 		end
-		@irc.close()
+		@irc.close() if !closed?
 	end
 
 	def ping()
@@ -81,7 +83,12 @@ class Messager
 
 	def gets()
 		if !closed?
-			return @irc.gets()
+			begin
+				return @irc.gets()
+			rescue IOError, Errno::ENOTCONN => e
+				sleep(1)
+				return nil
+			end
 		else
 			return nil
 		end
