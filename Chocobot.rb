@@ -86,7 +86,9 @@ class Chocobot
 					@run = false
 				end
 			when "!ping"
-				message("Pong!")
+				if priv <= 10
+					message("Pong!")
+				end
 			else
 				cmdExecuted = false
 			end

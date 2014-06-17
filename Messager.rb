@@ -24,7 +24,7 @@ class Messager
 
 		Thread.new do
 			while @run
-				element = @queue.pop(true) rescue nil #TODO
+				element = @queue.pop(true) rescue nil # nötig, sonst geht STRG+C nicht
 				if @ping_time + 300 < Time.new()
 					@logger.puts("Reconnecting...", true)
 					connect()
