@@ -113,14 +113,7 @@ class Chocobot
 		
 		while @run
 			# ctrl-c catching
-			begin
-				data = @messager.gets()
-			rescue IOError => e
-				if !@messager.closed?()
-					raise e
-				end
-				return
-			end
+			data = @messager.gets()
 
 			if data != nil
 				data.strip!()
