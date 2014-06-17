@@ -4,7 +4,7 @@ class Messager
 
 	attr_accessor :queue
 
-	def initialize(host, port, oauth, username, channel, logger)
+	def initialize(host, port, oauth, username, channel, logger, chocobot)
 		@queue = Queue.new
 		@stop = false
 		@run = true
@@ -17,13 +17,14 @@ class Messager
 		@channel = channel
 		@username = username
 		@logger = logger
+		@chocobot = chocobot
 
 		connect()
 
 
 		Thread.new do
 			while @run
-				element = @queue.pop(true) rescue nil
+				element = @queue.pop(true) rescue nil #TODO
 				if @ping_time + 300 < Time.new()
 					@logger.puts("Reconnecting...", true)
 					connect()
@@ -56,6 +57,7 @@ class Messager
 			@irc.puts("TWITCHCLIENT 1")
 			@irc.write("JOIN " + @channel + "\n")
 		end
+		@chocobot.initOps()
 	end
 
 	def stop()

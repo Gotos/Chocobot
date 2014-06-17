@@ -27,12 +27,9 @@ class Chocobot
 		# Connect
 		@username = concon[:username].downcase
 		@channel = concon[:channel].downcase
-		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger)
+		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger, self)
 		PluginLoader.boot(@messager, @logger)
 		@run = true
-
-		@ops = Set.new([@username])
-		@subs = Set.new()
 
 		@logger.puts("Initialization complete!", true)
 		trap("INT") {
@@ -45,6 +42,11 @@ class Chocobot
 	# Sends a Message to current channel
 	def message(msg)
 		@messager.message(msg)
+	end
+
+	def initOps()
+		@ops = Set.new([@username])
+		@subs = Set.new()
 	end
 
 	def ping(text)
