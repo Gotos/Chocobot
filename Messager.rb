@@ -69,7 +69,7 @@ class Messager
 	end
 
 	def ping(text)
-		@messager.raw("PONG " + text)
+		raw("PONG " + text)
 		@ping_time = Time.new
 	end
 
