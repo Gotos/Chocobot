@@ -50,8 +50,7 @@ class Chocobot
 	end
 
 	def ping(text)
-		@messager.ping()
-		@messager.raw("PONG " + text)
+		@messager.ping(text)
 	end
 
 	def commands(nick, msg)

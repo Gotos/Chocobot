@@ -68,7 +68,8 @@ class Messager
 		@irc.close() if !closed?
 	end
 
-	def ping()
+	def ping(text)
+		@messager.raw("PONG " + text)
 		@ping_time = Time.new
 	end
 
