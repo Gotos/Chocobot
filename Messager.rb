@@ -88,7 +88,7 @@ class Messager
 		if !closed?
 			begin
 				return @irc.gets()
-			rescue IOError, Errno::ENOTCONN, Errno::EBADF => e
+			rescue IOError, Errno::ENOTCONN, Errno::EBADF, Errno::ECONNRESET => e
 				sleep(1)
 				return nil
 			end
