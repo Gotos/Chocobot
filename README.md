@@ -41,7 +41,7 @@ Plugins go into the "Plugins"-Folder. They need to be in a subfolder named the s
 
 ## Running Chocobot
 
-Just start Chocobot.rb. To stop it, eigther send the command "!exit" as the channelowner, or press Ctrl+C.
+Just start Chocobot.rb. To stop it, either send the command "!exit" as the channelowner, or press Ctrl+C.
 
 # Downloads
 
