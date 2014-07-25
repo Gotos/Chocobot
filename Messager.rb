@@ -10,6 +10,7 @@ class Messager
 		@run = true
 		@write_mutex = Mutex.new
 		@ping_time = Time.new
+		@cantConnect = false
 
 		@host = host
 		@port = port
@@ -50,8 +51,20 @@ class Messager
 			if !closed?
 				@irc.close()
 			end
-			@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-			@irc.connect(Socket.pack_sockaddr_in(@port, @host))
+			tries = 0
+			while closed?
+				begin
+					@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
+					@irc.connect(Socket.pack_sockaddr_in(@port, @host))
+				rescue IOError, SystemCallError => e
+					if tries == 6
+						@cantConnect = true
+						raise e
+					end
+					tries += 1
+					sleep(10)
+				end
+			end
 			@irc.puts("PASS " + @oauth)
 			@irc.puts("NICK " + @username)
 			@irc.puts("TWITCHCLIENT 1")
@@ -74,11 +87,13 @@ class Messager
 	end
 
 	def message(msg)
+		broken?
 		@logger.puts(@username + ": " + msg, @logger.messages)
 		@queue << ("PRIVMSG " + @channel + " :" + msg)
 	end
 
 	def raw(msg)
+		broken?
 		@write_mutex.synchronize do
 			@irc.puts(msg)
 		end
@@ -88,7 +103,7 @@ class Messager
 		if !closed?
 			begin
 				return @irc.gets()
-			rescue IOError, Errno::ENOTCONN, Errno::EBADF, Errno::ECONNRESET => e
+			rescue IOError, SystemCallError => e
 				sleep(1)
 				return nil
 			end
@@ -98,11 +113,16 @@ class Messager
 	end
 
 	def closed?()
+		broken?
 		if @irc != nil
 			return @irc.closed?()
 		else
 			return true
 		end
+	end
+
+	def broken?()
+		raise "Couldn't connect" if @cantConnect
 	end
 
 end
