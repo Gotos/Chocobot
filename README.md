@@ -1,6 +1,15 @@
-# What is Chocobot
+# What is Chocobot?
 
 Chocobot is an easy-to-use, easy-to-extend Bot for managing your Twitch-Chat written in ruby. While Chocobot by itself doesn't do more then connecting to a channel, plugins can interact with the chat. Via plugins you can manage commands the bot response to, add timed messages and many other cool tasks. Take a look at the plugin-list below!
+
+## Features
+
+At the moment Chocobot does nothing more than connecting to twitch via IRC (and logging the chat) and providing a plugin-interface. It recognizes only two command without any plugins, !ping (mods and channelowner only), that will respond with an message containing "Pong!" and "!exit" (owner only), which will stop the bot.
+
+### Planned Features
+
+* Twitch-API-Connection
+* Webinterface
 
 # Plugins
 ## Official Plugins
@@ -9,6 +18,7 @@ Chocobot is an easy-to-use, easy-to-extend Bot for managing your Twitch-Chat wri
 * [CustomCommands](https://github.com/Gotos/Chocobot-CustomCommands) Create new commands your bot response to on the fly
 
 # How to run
+
 ## Quick install
 
 Get ruby (tested with 2.1.2). Install data_mapper via Rubygems ('gem install data_mapper') and DataMappers adapter for the database you'd like to use, e.g. 'gem install dm-sqlite-adapter'.
@@ -28,6 +38,10 @@ That should be all. If you know what you are doing you can set a different serve
 ## Installing Plugins
 
 Plugins go into the "Plugins"-Folder. They need to be in a subfolder named the same as the main pluginfile - don't worry, Plugins will usually provide that folder or at least tell you how it should be named.
+
+## Running Chocobot
+
+Just start Chocobot.rb. To stop it, eigther send the command "!exit" as the channelowner, or press Ctrl+C.
 
 # Downloads
 
