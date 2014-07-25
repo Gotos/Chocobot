@@ -85,7 +85,7 @@ class Chocobot
 					@run = false
 				end
 			when "!ping"
-				if priv <= 10
+				if priv <= 20
 					message("Pong!")
 				end
 			else
