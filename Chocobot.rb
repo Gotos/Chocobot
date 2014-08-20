@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 require 'socket'
 require 'set'
 require './Settings.rb'

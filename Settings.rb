@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Settings-Module based on http://speakmy.name/2011/05/29/simple-configuration-for-ruby-apps/
 # and http://api.rubyonrails.org/classes/Hash.html#method-i-deep_symbolize_keys-21
 require 'yaml'
