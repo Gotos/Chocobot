@@ -1,10 +1,11 @@
 # What is Chocobot?
 
-Chocobot is an easy-to-use, easy-to-extend Bot for managing your Twitch-Chat written in ruby. While Chocobot by itself doesn't do more then connecting to a channel, plugins can interact with the chat. Via plugins you can manage commands the bot response to, add timed messages and many other cool tasks. Take a look at the plugin-list below!
+Chocobot is an easy-to-use, easy-to-extend Bot for managing your Twitch-Chat written in ruby. While Chocobot by itself doesn't do more than connecting to a channel, plug-ins can interact with the chat. Via those plug-ins you can manage commands the bot responses to, add timed messages and many other cool tasks. Take a look at the plug-in-list below! 
+
 
 ## Features
 
-At the moment Chocobot does nothing more than connecting to twitch via IRC (and logging the chat) and providing a plugin-interface. It recognizes only two command without any plugins, !ping (mods and channelowner only), that will respond with an message containing "Pong!" and "!exit" (owner only), which will stop the bot.
+At the moment Chocobot does nothing more than connecting to twitch via IRC (and logging into the chat) and providing a plug-in interface. It recognizes only two commands without any plug-ins; !ping (mods and channel owner only), that will respond with an message saying "Pong!"; and "!exit" (owner only) which will stop the bot.
 
 ### Planned Features
 
