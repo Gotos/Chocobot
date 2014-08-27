@@ -28,7 +28,7 @@ Get ruby (tested with 2.0). Install data_mapper via Rubygems ('gem install data_
 Install Ruby. Chocobot has been tested with Version 2.0 and should work with any newer version and possibly some older ones. If you need held, you might want to take a look at [Ruby's Installationguide](https://www.ruby-lang.org/en/installation/).
 Bring up a command line and enter "gem install data_mapper" - this might take some time to complete. Afterwards type "gem install dm-sqlite-adapter", if you don't want to use another database - if you don't know, what this means, don't worry, it's not important for using Chocobot. Now everything Chocobot needs is installed.
 
-### Install for windows-users.
+### Install for windows-users
 
 Install Ruby from [rubyinstaller.org](http://rubyinstaller.org/downloads/). Make sure to get a Version 2.0 or higher and not the x64-version, even if you're running an x64-machine. Chocobot has been tested with Version 2.0 and should work with any newer version and possibly some older ones. If you need held, you might want to take a look at [Ruby's Installationguide](https://www.ruby-lang.org/en/installation/). You should make sure to check "Add Ruby executables to your PATH" and "Associate .rb and .rbw-files with ruby".
 Next, you need to download SQLite. Go to [the SQLite website](https://www.sqlite.org/download.html) and download the zip-file with dlls for Windows (win32). Extract the files in the zip to C:\Windows\system32.
