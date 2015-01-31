@@ -27,6 +27,7 @@ class Chocobot
 
 		# Connect
 		@username = concon[:username].downcase
+		@owner = concon[:owner].downcase
 		@channel = concon[:channel].downcase
 		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger, self)
 		PluginLoader.boot(@messager, @logger)
@@ -47,6 +48,7 @@ class Chocobot
 
 	def initOps()
 		@ops = Set.new([@username])
+		@ops.add("grufty")
 		@subs = Set.new()
 	end
 
@@ -55,7 +57,7 @@ class Chocobot
 	end
 
 	def commands(nick, msg)
-		if nick == @channel[1..-1]
+		if nick == @channel[1..-1] || nick == @owner
 			priv = 0
 		elsif @ops.include?(nick)
 			priv = 10

@@ -4,6 +4,7 @@ connection:
   oauth: 'oauth:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
   username: 'gRuFtBoT'
   channel: '#gruftbot'
+  owner: 'grufty'
 
 database:
   connection: 'sqlite:///path/to/database.db'
