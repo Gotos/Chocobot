@@ -27,7 +27,11 @@ class Chocobot
 
 		# Connect
 		@username = concon[:username].downcase
-		@owner = concon[:owner].downcase
+		if concon[:owner] != nil
+			@owner = concon[:owner].downcase
+		else 
+			@owner = nil
+		end
 		@channel = concon[:channel].downcase
 		@messager = Messager.new(concon[:host], concon[:port], concon[:oauth], @username, @channel, @logger, self)
 		PluginLoader.boot(@messager, @logger)
