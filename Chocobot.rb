@@ -189,6 +189,8 @@ class Chocobot
 					if channel.downcase == @channel
 						@logger.puts("JOIN: " + nick, @logger.joins())
 					end
+				when "NOTICE"
+					@logger.puts(baseTriple[2].split(' :', 2)[1], true)
 				else
 					#puts data
 				end
