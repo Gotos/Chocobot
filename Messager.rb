@@ -68,7 +68,7 @@ class Messager
 			end
 			@irc.puts("PASS " + @oauth)
 			@irc.puts("NICK " + @username)
-			@irc.puts("CAP REQ :twitch.tv/membership ")
+			@irc.puts("CAP REQ :twitch.tv/membership")
 			@irc.write("JOIN " + @channel + "\n")
 		end
 		@chocobot.initOps()
