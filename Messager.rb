@@ -54,16 +54,31 @@ class Messager
 			end
 			tries = 0
 			while closed?
-				begin
-					@irc = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
-					@irc.connect(Socket.pack_sockaddr_in(@port, @host))
-				rescue IOError, SystemCallError => e
-					if tries == 6
-						@cantConnect = true
-						raise e
+				addr = Socket.getaddrinfo(@host, nil)
+				sockaddr = Socket.pack_sockaddr_in(@port, addr[0][3])
+
+				@irc = Socket.new(Socket.const_get(addr[0][0]), Socket::SOCK_STREAM, 0).tap do | socket |
+					socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+ 					begin
+ 						socket.connect_nonblock(sockaddr)
+ 					rescue IO::WaitWritable
+ 						if IO.select(nil, [socket], nil, 10)
+ 							begin
+ 								socket.connect_nonblock(sockaddr)
+ 							rescue Errno::EISCONN
+ 							rescue
+ 								socket.close
+ 								raise
+ 							end
+ 						else
+	 						socket.close
+	 						if tries == 6
+								@cantConnect = true
+								raise e
+							end
+							tries += 1
+						end
 					end
-					tries += 1
-					sleep(10)
 				end
 			end
 			@irc.puts("PASS " + @oauth)
@@ -103,6 +118,7 @@ class Messager
 	def gets()
 		if !closed?
 			begin
+				readfds, writefds, exceptfds = select([@irc], nil, nil, 0.1)
 				return @irc.gets()
 			rescue IOError, SystemCallError => e
 				sleep(1)
